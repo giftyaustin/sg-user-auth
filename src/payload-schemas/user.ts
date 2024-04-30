@@ -44,3 +44,21 @@ export const loginUserSchema = Joi.object({
     "string.min": "Password must be at least 8 characters",
   }),
 });
+
+
+export const updatePasswordSchema = Joi.object({
+  oldPassword: Joi.string().required().messages({
+    "string.empty": "Old Password cannot be empty",
+  }),
+  newPassword: Joi.string()
+  .required()
+  .min(8)
+  .pattern(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&^])[A-Za-z\d@.#$!%*?&]{8,15}$/,
+    "Password must have at least one lowercase letter, one uppercase letter, one digit, and one special character"
+  )
+  .messages({
+    "string.empty": "Password cannot be empty",
+    "string.min": "Password must be at least 8 characters",
+  }),
+})

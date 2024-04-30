@@ -12,13 +12,16 @@ declare global {
   }
 
 export const validateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
-    const accessToken = req.cookies["token"];
+  
+    const accessToken = req.cookies.token || req.headers.token || '';
     if(!accessToken){
         return res.status(401).json({
             status: false,  
             error: "User unauthorized"
         })
     }
+    
+    
     const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!);
 
     const user = await User.findById(decoded).select("+password");

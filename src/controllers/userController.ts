@@ -76,3 +76,52 @@ export const getUserDetails = async (
     data: { email, username },
   });
 };
+
+export const updatePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { oldPassword, newPassword } = req.body;
+  if(oldPassword === newPassword){
+    return res.status(400).json({
+      status: false,
+      error: "New password cannot be same as old password",
+    })
+  }
+  const email = req.user.email;
+  const user = await User.findOne({ email }).select("+password");
+  if(!user){
+    return res.status(404).json({
+      status: false,
+      error: "User not found",
+    })
+  }
+
+    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({
+        status: false,
+        error: "Old password is incorrect",
+      });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNewPassword;
+    await user.save();
+    return res.status(200).json({
+      status: true,
+      message: "Password updated successfully",
+    });
+};
+
+export const logoutUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  res.cookie("token", {}, { httpOnly: true, expires: new Date(Date.now()) });
+  res.json({
+    message: "logged out Successfully",
+  });
+};

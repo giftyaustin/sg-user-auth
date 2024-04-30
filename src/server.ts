@@ -4,14 +4,16 @@ import { connectDB } from './database/connectDB';
 import dotenv from 'dotenv';
 import { userRouter } from './routers/userRouter';
 import { errorHandler } from './lib/errorHandler';
+import cookieParser from 'cookie-parser';
 dotenv.config();
 const app = express();
 connectDB()
 
 app.use(express.json());
+app.use(cookieParser())
 app.use(userRouter)
 app.get('/', (req, res) => {
-    res.send('Hello, TypeScript with Express!');
+    res.send('Hello');
 });
 
 

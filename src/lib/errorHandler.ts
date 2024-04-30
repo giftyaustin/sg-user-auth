@@ -18,10 +18,15 @@ export const errorHandler = (
     handleDuplicateEntry(err, res);
     return;
   }
+  if(err.name === "JsonWebTokenError"){
+    return res.status(401).json({
+      status: false,
+      message: "Invalid token",
+    });
+  }
 
-  console.error(err);
   return res.status(500).json({
     status: false,
-    message: "Internal server error",
+    message: err.message || "Internal server error",
   });
 };
